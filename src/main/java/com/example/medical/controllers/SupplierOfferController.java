@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/offers")
@@ -31,10 +32,9 @@ public class SupplierOfferController {
     }
 
     @GetMapping("/request/{requestId}")
-    public ResponseEntity<Page<SupplierOffer>> getOffersByRequest(
-            @PathVariable Long requestId,
-            Pageable pageable) {
-        return ResponseEntity.ok(supplierOfferService.getOffersByRequestId(requestId, pageable));
+    public ResponseEntity<List<SupplierOffer>> getOffersByRequest(
+            @PathVariable Long requestId) {
+        return ResponseEntity.ok(supplierOfferService.getOffersByRequestId(requestId));
     }
 
     @GetMapping("/supplier/{supplierId}")
@@ -49,5 +49,10 @@ public class SupplierOfferController {
             @PathVariable Long offerId,
             @RequestParam OfferStatus newStatus) {
         return ResponseEntity.ok(supplierOfferService.updateOfferStatus(offerId, newStatus));
+    }
+
+    @GetMapping("/{offerId}")
+    public ResponseEntity<SupplierOffer> getOfferById(@PathVariable Long offerId) {
+        return ResponseEntity.ok(supplierOfferService.getOfferById(offerId));
     }
 } 

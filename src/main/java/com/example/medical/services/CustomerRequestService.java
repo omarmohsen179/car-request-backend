@@ -44,4 +44,9 @@ public class CustomerRequestService {
         request.setStatus(newStatus);
         return customerRequestRepository.save(request);
     }
+
+    public CustomerRequest getRequestById(Long requestId) {
+        return customerRequestRepository.findById(requestId)
+                .orElseThrow(() -> new RuntimeException("Request not found"));
+    }
 } 

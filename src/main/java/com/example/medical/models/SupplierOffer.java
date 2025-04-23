@@ -24,10 +24,7 @@ public class SupplierOffer {
     @Column(nullable = false)
     private OfferStatus status;
 
-    @Column(nullable = true)
-    private Integer inspectionScore;
-
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(name = "car_condition_details", nullable = false, columnDefinition = "TEXT")
     private String carDetails;
 
     @Column(nullable = false, precision = 10, scale = 2)

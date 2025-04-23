@@ -66,4 +66,9 @@ public class CustomerRequestController {
             @RequestParam RequestStatus newStatus) {
         return ResponseEntity.ok(customerRequestService.updateRequestStatus(requestId, newStatus));
     }
+
+    @GetMapping("/{requestId}")
+    public ResponseEntity<CustomerRequest> getRequestById(@PathVariable Long requestId) {
+        return ResponseEntity.ok(customerRequestService.getRequestById(requestId));
+    }
 } 

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class SupplierOfferService {
@@ -35,6 +36,7 @@ public class SupplierOfferService {
             throw new RuntimeException("Cannot submit offer for non-active request");
         }
 
+        // Check if offer already exists
         if (supplierOfferRepository.existsByRequestIdAndSupplierId(requestId, supplierId)) {
             throw new RuntimeException("Supplier has already submitted an offer for this request");
         }
@@ -49,8 +51,8 @@ public class SupplierOfferService {
         return supplierOfferRepository.save(offer);
     }
 
-    public Page<SupplierOffer> getOffersByRequestId(Long requestId, Pageable pageable) {
-        return supplierOfferRepository.findByRequestId(requestId, pageable);
+    public List<SupplierOffer> getOffersByRequestId(Long requestId) {
+        return supplierOfferRepository.findByRequestId(requestId);
     }
 
     public Page<SupplierOffer> getOffersBySupplierId(Long supplierId, Pageable pageable) {
@@ -63,5 +65,10 @@ public class SupplierOfferService {
                 .orElseThrow(() -> new RuntimeException("Offer not found"));
         offer.setStatus(newStatus);
         return supplierOfferRepository.save(offer);
+    }
+
+    public SupplierOffer getOfferById(Long offerId) {
+        return supplierOfferRepository.findById(offerId)
+                .orElseThrow(() -> new RuntimeException("Offer not found"));
     }
 } 
