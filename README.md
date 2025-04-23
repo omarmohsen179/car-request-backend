@@ -1,159 +1,139 @@
+# Car Buying App
 
-# Medical Appointment Management System
-
-## Overview
-
-This is a Spring Boot application for managing medical appointments. It allows the clinic admin to review appointments by date or patient, add new appointments, cancel appointments with a reason, filter appointments by date and patient name, and preview patient appointment history. The application uses PostgreSQL as the database and provides Swagger UI for API documentation.
+A Spring Boot application that facilitates the process of buying cars through a platform where customers can request cars and suppliers can submit offers.
 
 ## Features
 
-- List today's appointments
-- Add new appointments
-- Cancel appointments with a reason
-- Filter appointments by date (future or history)
-- Filter appointments by patient name
-- Preview patient appointment history
+### Customer Requests
+- Create requests for buying cars (imported or local)
+- Specify inspection company for car verification
+- Track request status (PENDING, IN_PROGRESS, COMPLETED, CANCELLED)
+- View supplier offers for their requests
 
-## Technologies Used
+### Supplier Offers
+- Submit offers for customer requests
+- Include price and car condition details
+- Track offer status (PENDING, ACCEPTED, REJECTED)
+- View customer requests
 
-- Spring Boot
+### Inspection Integration
+- Support for multiple inspection companies (AutoCheck and VehiVerify)
+- Automatic car inspection upon request creation
+- Inspection score tracking
+
+## Models
+
+### CustomerRequest
+- ID
+- Customer details (name, contact info)
+- Car details (make, model, year, etc.)
+- Request type (IMPORTED or LOCAL)
+- Inspection company
+- Inspection score
+- Request status
+- Creation timestamp
+- List of supplier offers
+
+### SupplierOffer
+- ID
+- Supplier details (name, contact info)
+- Associated customer request
+- Price
+- Car condition details
+- Offer status
+- Creation timestamp
+
+### InspectionCompany
+- Company name
+- Contact information
+- Inspection capabilities
+
+## Technical Stack
+
+- Java 17
+- Spring Boot 3.2.3
 - Spring Data JPA
-- Hibernate
-- PostgreSQL
-- Swagger (Springdoc OpenAPI)
-- Docker
-- Docker Compose
+- MySQL 8.0
 - Maven
-
-## Prerequisites
-
 - Docker
-- Docker Compose
+- Swagger/OpenAPI 3.0
 
-## Building and Running the Application
+## Getting Started
 
-### Using Maven
+### Prerequisites
+- Java 17
+- Maven
+- MySQL 8.0
+- Docker (optional)
 
-To build the application using Maven, run:
+### Installation
 
-\`\`\`bash
-./mvnw clean package -DskipTests
-\`\`\`
+1. Clone the repository
+2. Configure database connection in `application.properties`
+3. Build the project:
+   ```bash
+   mvn clean install
+   ```
+4. Run the application:
+   ```bash
+   mvn spring-boot:run
+   ```
 
-### Using Docker Compose
-run command:  docker-compose -f docker-compose.yml  up --build
+### Docker Deployment
 
-#### Docker Compose Setup
+1. Build the Docker image:
+   ```bash
+   docker build -t car-buying-app .
+   ```
+2. Run the container:
+   ```bash
+   docker run -p 8080:8080 car-buying-app
+   ```
 
-Ensure you have the following \`docker-compose.yml\` file:
+## API Documentation
 
-\`\`\`yaml
-version: '3.8'
+The API documentation is available at:
+```
+http://localhost:8080/swagger-ui.html
+```
 
-services:
-postgres:
-image: postgres:13
-container_name: postgres
-environment:
-POSTGRES_DB: clinic
-POSTGRES_USER: user
-POSTGRES_PASSWORD: password
-ports:
-- "5432:5432"
-volumes:
-- postgres-data:/var/lib/postgresql/data
+## Testing
 
-app:
-build: .
-container_name: medical-appointment-system
-environment:
-SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/clinic
-SPRING_DATASOURCE_USERNAME: user
-SPRING_DATASOURCE_PASSWORD: password
-SPRING_JPA_HIBERNATE_DDL_AUTO: update
-ports:
-- "8080:8080"
-depends_on:
-- postgres
+The application includes:
+- Unit tests for services and controllers
+- Integration tests for API endpoints
+- Database migration tests
 
-volumes:
-postgres-data:
-\`\`\`
+Run tests with:
+```bash
+mvn test
+```
 
-#### Dockerfile
+## Validation Rules
 
-Ensure you have the following \`Dockerfile\` in the root directory of your project:
+- Customer requests must include:
+  - Valid customer information
+  - Complete car details
+  - Selected inspection company
+- Supplier offers must include:
+  - Valid supplier information
+  - Price greater than 0
+  - Detailed car condition information
 
-\`\`\`Dockerfile
-# Stage 1: Build the application
-FROM maven:3.8.5-openjdk-17 AS builder
+## Database Migrations
 
-# Set the working directory
-WORKDIR /app
+The application uses Flyway for database migrations. Migration scripts are located in:
+```
+src/main/resources/db/migration
+```
 
-# Copy the pom.xml file and download dependencies
-COPY pom.xml .
-RUN mvn dependency:go-offline
+## Contributing
 
-# Copy the entire project and build the application
-COPY . .
-RUN mvn clean package -DskipTests
-
-# Stage 2: Create the final image
-FROM openjdk:17-jdk-slim
-
-# Set the working directory
-WORKDIR /app
-
-# Copy the JAR file from the builder stage
-COPY --from=builder /app/target/medical-0.0.1-SNAPSHOT.jar /app/medical-appointment-system.jar
-
-# Expose port 8080 to the outside world
-EXPOSE 8080
-
-# Run the JAR file
-ENTRYPOINT ["java", "-jar", "medical-appointment-system.jar"]
-\`\`\`
-
-#### Build and Run Containers
-
-To build the Docker image and run the containers, use the following command:
-
-\`\`\`bash
-docker-compose up --build
-\`\`\`
-
-### Accessing the Application
-
-- **Swagger UI**: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
-
-### Configuration
-
-The application uses environment variables to configure the database connection. These are set in the \`docker-compose.yml\` file.
-
-\`\`\`yaml
-environment:
-SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/clinic
-SPRING_DATASOURCE_USERNAME: user
-SPRING_DATASOURCE_PASSWORD: password
-SPRING_JPA_HIBERNATE_DDL_AUTO: update
-\`\`\`
-
-## API Endpoints
-
-### Patient Endpoints
-
-- **GET** \`/api/patients\`: Retrieve all patients
-- **GET** \`/api/patients/{id}\`: Retrieve a patient by ID
-- **POST** \`/api/patients\`: Create a new patient
-- **PUT** \`/api/patients/{id}\`: Update an existing patient
-- **DELETE** \`/api/patients/{id}\`: Delete a patient by ID
-
-### Appointment Endpoints
-
-- **GET** \`/api/appointments\`: Retrieve all appointments
-- **POST** \`/api/appointments\`: Create a new appointment
-- **PUT** \`/api/appointments/{id}/cancel\`: Cancel an appointment
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
 ## License
 

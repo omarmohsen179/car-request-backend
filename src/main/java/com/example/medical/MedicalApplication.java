@@ -1,12 +1,10 @@
 package com.example.medical;
 
-
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 public class MedicalApplication {
@@ -16,10 +14,11 @@ public class MedicalApplication {
     }
 
     @Bean
-    public OpenAPI registrationOpenAPI() {
+    public OpenAPI customOpenAPI() {
         return new OpenAPI()
-                .info(new Info().title("Spring boot medical app")
-                        .description("Your API Description")
-                        .version("1.0"));
+                .info(new Info()
+                        .title("Car Request API")
+                        .version("1.0")
+                        .description("API documentation for Car Request Application"));
     }
 }

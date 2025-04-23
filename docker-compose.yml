@@ -1,30 +1,36 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:13
-    container_name: postgres
+  mysql:
+    image: mysql:8.0
+    container_name: car-buying-mysql
     environment:
-      POSTGRES_DB: clinic
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: car_buying_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   app:
     build: .
-    container_name: medical-appointment-system
+    container_name: car-buying-app
+    depends_on:
+      mysql:
+        condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/clinic
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/car_buying_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
     ports:
       - "8080:8080"
-    depends_on:
-      - postgres
 
 volumes:
-  postgres-data:
+  mysql_data:

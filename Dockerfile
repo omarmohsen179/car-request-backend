@@ -19,10 +19,10 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy the JAR file from the builder stage
-COPY --from=builder /app/target/medical-0.0.1-SNAPSHOT.jar /app/medical-appointment-system.jar
+COPY --from=builder /app/target/car-buying-app-0.0.1-SNAPSHOT.jar /app/car-buying-app.jar
 
 # Expose port 8080 to the outside world
 EXPOSE 8080
 
 # Run the JAR file
-ENTRYPOINT ["java", "-jar", "medical-appointment-system.jar"]
+ENTRYPOINT ["java", "-jar", "car-buying-app.jar"]
